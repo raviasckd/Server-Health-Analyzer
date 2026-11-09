@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+system_health.log
+latest_health_report.json
+.pytest_cache/
+.coverage
+htmlcov/
