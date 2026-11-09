@@ -6,7 +6,7 @@ A lightweight Python utility that collects basic host CPU and memory metrics and
 
 - Captures CPU utilisation and logical CPU count using `psutil`.
 - Captures total memory, used memory, and percentage used.
-- Logs high CPU and memory utilisation according to fixed thresholds.
+- Applies configurable CPU warning and memory alert thresholds.
 - Writes the latest report to `latest_health_report.json`.
 - Writes operational messages to `system_health.log`.
 
@@ -25,13 +25,24 @@ cd Server-Health-Analyzer
 python -m pip install -r requirements.txt
 ```
 
-Run the analyzer:
+## Run
+
+Use the default thresholds (CPU 85%, memory 90%):
 
 ```bash
 python analyzer.py
 ```
 
-The current script performs three report cycles and exits. Each cycle measures CPU utilisation, collects memory metrics, and overwrites `latest_health_report.json`. The log file is also created in the current working directory.
+Override either threshold from the command line:
+
+```bash
+python analyzer.py --cpu-threshold 75
+python analyzer.py --cpu-threshold 80 --memory-threshold 88
+```
+
+Both threshold values must be between 0 and 100. Values above the configured threshold trigger the corresponding log alert. Defaults remain 85% for CPU and 90% for memory.
+
+The current script performs three report cycles in the foreground, with a two-second pause between cycles. It is not a continuously running service.
 
 ## Example report
 
@@ -53,10 +64,6 @@ The current script performs three report cycles and exits. Each cycle measures C
 
 The values above are illustrative; actual values depend on the host being monitored.
 
-## Thresholds
-
-The current implementation logs a CPU warning when utilisation exceeds 85% and a memory error when utilisation exceeds 90%. These thresholds are fixed in `analyzer.py`.
-
 ## Development
 
 Install the project dependency and run the unit tests:
@@ -68,7 +75,7 @@ python -m unittest discover -s tests -v
 
 ## Scope and limitations
 
-The current implementation is synchronous and runs a finite three-cycle loop in the foreground. It is not yet an asynchronous daemon or a service manager integration. Disk I/O, network statistics, process-level metrics, configurable thresholds, and long-running scheduling are not currently implemented.
+The current implementation is synchronous and runs a finite three-cycle loop in the foreground. Disk I/O, network statistics, process-level metrics, configurable polling intervals, and long-running service scheduling are not currently implemented.
 
 ## License
 
